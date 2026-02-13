@@ -25,9 +25,13 @@ if [ ! -f /data/uvdesk-config/.env ] || [ ! -s /data/uvdesk-config/.env ]; then
 fi
 
 # Ensure correct permissions for persistence
+echo "Setting permissions for /data/uvdesk-config..."
 chown -R www-data:www-data /data/uvdesk-config
-chmod -R 775 /data/uvdesk-config
-chmod 666 /data/uvdesk-config/.env
+chmod -R 777 /data/uvdesk-config
+chmod 777 /data/uvdesk-config/.env
+
+echo "Permissions after fix:"
+ls -la /data/uvdesk-config/
 
 # Force APP_ENV=prod and APP_DEBUG=0 in persistent .env if it exists AND env var is not set (to avoid overwriting user provided config)
 if [ -f /data/uvdesk-config/.env ] && [ -z "$UV_ENV_FILE_CONTENT" ]; then
