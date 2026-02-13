@@ -16,6 +16,12 @@ if [ ! -f /data/uvdesk-config/.env ] || [ ! -s /data/uvdesk-config/.env ]; then
     chown www-data:www-data /data/uvdesk-config/.env
 fi
 
+# Force APP_ENV=prod and APP_DEBUG=0 in persistent .env if it exists
+if [ -f /data/uvdesk-config/.env ]; then
+    sed -i 's/APP_ENV=dev/APP_ENV=prod/g' /data/uvdesk-config/.env
+    sed -i 's/APP_DEBUG=1/APP_DEBUG=0/g' /data/uvdesk-config/.env
+fi
+
 # Link the app .env to the persistent one
 if [ ! -L /var/www/uvdesk/.env ]; then
     echo "Linking .env to persistent storage"
