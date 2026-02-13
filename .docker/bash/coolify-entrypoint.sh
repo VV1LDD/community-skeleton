@@ -1,12 +1,18 @@
 #!/bin/bash
-set -e
+# Remove set -e to allow container to stay up even if migrations fail initially
+# set -e
+
 # Fix permissions if needed
 chown -R www-data:www-data /var/www/uvdesk/var /var/www/uvdesk/public
 
 # Handle persistent .env
 if [ ! -f /data/uvdesk-config/.env ]; then
-    echo "Creating empty .env in persistent storage"
-    touch /data/uvdesk-config/.env
+    echo "Initializing persistent .env from image default"
+    if [ -f /var/www/uvdesk/.env ]; then
+        cp /var/www/uvdesk/.env /data/uvdesk-config/.env
+    else
+        touch /data/uvdesk-config/.env
+    fi
     chown www-data:www-data /data/uvdesk-config/.env
 fi
 
@@ -28,15 +34,13 @@ echo "Checking database connection..."
 # We could add a wait-for-it script here if needed, but for now we rely on restarts.
 
 echo "Running migrations..."
-php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration || echo "Migrations failed or not needed (first run?)"
+php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration || echo "Migrations failed or not needed."
 
 echo "Clearing cache..."
-php bin/console cache:clear --env=prod || echo "Cache clear failed (first run?)"
+php bin/console cache:clear --env=prod
 
 # Ensure apache uses env vars
-if [ -f /etc/apache2/envvars ]; then
-    source /etc/apache2/envvars
-fi
+source /etc/apache2/envvars
 
 echo "Starting Apache..."
 exec apache2 -D FOREGROUND
