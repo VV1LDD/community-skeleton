@@ -10,7 +10,6 @@ services:
     restart: always
     environment:
       APP_ENV: prod
-      APP_ENV: prod
       UV_SESSION_COOKIE_LIFETIME: ${UV_SESSION_COOKIE_LIFETIME:-1440}
       MAILER_DSN: ${MAILER_DSN:-null://null}
     extra_hosts:
