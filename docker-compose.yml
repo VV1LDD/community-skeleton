@@ -5,6 +5,8 @@ services:
     build:
       context: .
       dockerfile: coolify.Dockerfile
+      args:
+        COMPOSER_AUTH: ${COMPOSER_AUTH}
     restart: always
     environment:
       APP_ENV: prod

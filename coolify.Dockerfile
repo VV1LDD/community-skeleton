@@ -46,6 +46,8 @@ WORKDIR /var/www/uvdesk
 COPY . .
 
 # Install dependencies
+ARG COMPOSER_AUTH
+ENV COMPOSER_AUTH=$COMPOSER_AUTH
 RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
 # Set permissions
