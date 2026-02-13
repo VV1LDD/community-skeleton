@@ -3,6 +3,9 @@ set -e
 
 # Fix permissions if needed
 chown -R www-data:www-data /var/www/uvdesk/var /var/www/uvdesk/public
+if [ -f /var/www/uvdesk/.env ]; then
+    chown www-data:www-data /var/www/uvdesk/.env
+fi
 
 # Create database if not exists (using UVDesk console if available or doctrine)
 # We use || true to avoid failure if DB already exists or connection fails temporarily (though we want it to work)
