@@ -19,7 +19,14 @@ services:
     volumes:
       - app_data:/var/www/uvdesk/var
       - public_data:/var/www/uvdesk/public/assets
+    networks:
+      - coolify
 
 volumes:
   app_data:
   public_data:
+
+
+networks:
+  coolify:
+    external: true
