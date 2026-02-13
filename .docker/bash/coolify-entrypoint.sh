@@ -6,8 +6,8 @@
 chown -R www-data:www-data /var/www/uvdesk/var /var/www/uvdesk/public
 
 # Handle persistent .env
-if [ ! -f /data/uvdesk-config/.env ]; then
-    echo "Initializing persistent .env from image default"
+if [ ! -f /data/uvdesk-config/.env ] || [ ! -s /data/uvdesk-config/.env ]; then
+    echo "Initializing persistent .env from image default (file missing or empty)"
     if [ -f /var/www/uvdesk/.env ]; then
         cp /var/www/uvdesk/.env /data/uvdesk-config/.env
     else
