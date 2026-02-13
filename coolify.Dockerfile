@@ -29,7 +29,8 @@ RUN apt-get update && apt-get install -y software-properties-common && \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Configure Apache
-RUN a2enmod rewrite
+RUN a2enmod rewrite && \
+    sed -i 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf
 ENV APACHE_RUN_USER=www-data
 ENV APACHE_RUN_GROUP=www-data
 ENV APACHE_LOG_DIR=/var/log/apache2
