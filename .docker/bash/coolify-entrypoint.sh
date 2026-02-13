@@ -28,13 +28,15 @@ echo "Checking database connection..."
 # We could add a wait-for-it script here if needed, but for now we rely on restarts.
 
 echo "Running migrations..."
-php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration || echo "Migrations failed or not needed."
+php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration || echo "Migrations failed or not needed (first run?)"
 
 echo "Clearing cache..."
-php bin/console cache:clear --env=prod
+php bin/console cache:clear --env=prod || echo "Cache clear failed (first run?)"
 
 # Ensure apache uses env vars
-source /etc/apache2/envvars
+if [ -f /etc/apache2/envvars ]; then
+    source /etc/apache2/envvars
+fi
 
 echo "Starting Apache..."
 exec apache2 -D FOREGROUND
