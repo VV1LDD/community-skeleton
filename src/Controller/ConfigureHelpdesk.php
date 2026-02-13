@@ -334,6 +334,7 @@ class ConfigureHelpdesk extends AbstractController
 
     public function createDefaultSuperUserXHR(Request $request, UserPasswordEncoderInterface $encoder)
     {
+        try {
         if (session_status() == PHP_SESSION_NONE) {
             session_start();
         }
@@ -342,12 +343,20 @@ class ConfigureHelpdesk extends AbstractController
         $entityManager = $this->getDoctrine()->getManager();
 
         $role = $entityManager->getRepository(SupportRole::class)->findOneByCode('ROLE_SUPER_ADMIN');
+        
+        if (!$role) {
+            throw new \Exception("Role 'ROLE_SUPER_ADMIN' not found. Fixtures might have failed to load.");
+        }
+
         $userInstance = $entityManager->getRepository(UserInstance::class)->findOneBy([
             'isActive'    => true,
             'supportRole' => $role,
         ]);
             
         if (empty($userInstance)) {
+            if (!isset($_SESSION['USER_DETAILS'])) {
+                throw new \Exception("User details not found in session. Session might have been lost.");
+            }
             list($name, $email, $password) = array_values($_SESSION['USER_DETAILS']);
             // Retrieve existing user or generate new empty user
             $accountExistsFlag = false;
@@ -394,6 +403,13 @@ class ConfigureHelpdesk extends AbstractController
         }
 
         return new Response(json_encode([]), 200, self::DEFAULT_JSON_HEADERS);
+    } catch (\Throwable $e) {
+        return new Response(json_encode([
+            'status' => 'error',
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]), 500, self::DEFAULT_JSON_HEADERS);
+    }
     }
 
     public function websiteConfigurationXHR(Request $request, UVDeskService $uvdesk)
