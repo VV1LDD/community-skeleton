@@ -51,7 +51,7 @@ ENV COMPOSER_AUTH=$COMPOSER_AUTH
 RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
 # Set permissions
-RUN chown -R www-data:www-data /var/www/uvdesk/var /var/www/uvdesk/config /var/www/uvdesk/public /var/www/uvdesk/.env
+RUN chown -R www-data:www-data /var/www/uvdesk
 
 # Configure Apache VHost
 COPY .docker/config/apache2/vhost.conf /etc/apache2/sites-available/000-default.conf
